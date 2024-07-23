@@ -9,7 +9,10 @@
     "build": "webpack --mode production --env goal=production --config webpack.prod.cjs",
     "sass": "sass --no-source-map --watch src/styles/index.scss:src/index.css",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration"
   },
   "dependencies": {
     "@emotion/react": "11.13.0",
