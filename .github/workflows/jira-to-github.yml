@@ -1,0 +1,19 @@
+name: Triggered by Jira
+
+on:
+  workflow_dispatch:
+    inputs:
+      jira_card_key:
+        description: 'Jira Card Key'
+        required: true
+        type: string
+
+jobs:
+  run-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Print Jira Card Key
+        run: echo "Jira Card Key: ${{ github.event.inputs.jira_card_key }}"
