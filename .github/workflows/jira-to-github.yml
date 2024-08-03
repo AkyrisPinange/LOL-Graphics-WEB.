@@ -36,6 +36,11 @@ jobs:
             exit 1
           fi
 
+      - name: Checkout feature branch
+        run: |
+          git checkout ${{ github.event.client_payload.issue_key }}
+          git pull origin ${{ github.event.client_payload.issue_key }}
+
       - name: Check if develop branch exists
         run: |
           if git show-ref --verify --quiet refs/remotes/origin/develop; then
@@ -47,7 +52,6 @@ jobs:
 
       - name: Check differences
         run: |
-          git checkout ${{ github.event.client_payload.issue_key }}
           git fetch origin develop:develop
           git diff develop --name-only
 
