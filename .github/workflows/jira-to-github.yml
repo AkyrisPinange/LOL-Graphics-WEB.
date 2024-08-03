@@ -18,10 +18,10 @@ jobs:
 
       - name: Update master and develop and fetch all branches
         run: |
-          git checkout master
-          git pull master
-          git checkout develop
-          git pull develop
+          git checkout origin/master
+          git pull origin/master
+          git checkout origin/develop
+          git pull origin/develop
           
       - name: Extract issue details
         id: extract
