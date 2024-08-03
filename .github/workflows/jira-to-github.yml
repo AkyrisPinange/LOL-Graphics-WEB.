@@ -51,7 +51,7 @@ jobs:
           fi
 
       - name: Fetch develop branch
-        run: git fetch origin develop:develop
+        run: git pull origin develop:develop
 
       - name: Check differences
         run: |
@@ -63,8 +63,7 @@ jobs:
           git checkout develop
           git pull origin develop
           git checkout ${{ github.event.client_payload.issue_key }}
-          git rebase develop
-          git push origin ${{ github.event.client_payload.issue_key }} --force-with-lease
+          git pull ${{ github.event.client_payload.issue_key }}
 
       - name: Create Pull Request
         id: create_pr
