@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write  # Permissão necessária para criar pull requests
+  pull-requests: write  # Permission required to create pull requests
 
 jobs:
   create-pr:
@@ -22,7 +22,6 @@ jobs:
         run: |
           echo "Extracting issue details"
           echo "Issue Key: ${{ github.event.client_payload.issue_key }}"
-          echo "User Name: ${{ github.event.client_payload.user_name }}"
 
       - name: Fetch all branches
         run: |
@@ -46,9 +45,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_TITLE="PR para a issue ${{ github.event.client_payload.issue_key }} criado por ${{ github.event.client_payload.user_name }} (triggered by ${{ github.actor }})"
-          PR_BODY="Este PR resolve a issue ${{ github.event.client_payload.issue_key }}.\nCriado por ${{ github.event.client_payload.user_name }} e acionado por ${{ github.actor }}."
-          PR_BRANCH="${{ github.event.client_payload.issue_key }}"
+          PR_TITLE="PR para a issue ${{ github.event.client_payload.issue_key }} criado por ${{ github.actor }}"
+          PR_BODY="Este PR resolve a issue ${{ github.event.client_payload.issue_key }}.\nCriado por ${{ github.event.client_payload.user_name }}"
           PR_BASE="develop"
 
           curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/json" \
