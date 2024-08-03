@@ -64,9 +64,7 @@ jobs:
           git pull origin develop
           git checkout ${{ github.event.client_payload.issue_key }}
           git pull origin ${{ github.event.client_payload.issue_key }}
-          git rebase develop
-          git push origin ${{ github.event.client_payload.issue_key }} --force-with-lease
-
+          
       - name: Create Pull Request
         id: create_pr
         uses: peter-evans/create-pull-request@v4
