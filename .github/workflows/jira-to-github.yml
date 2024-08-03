@@ -1,20 +1,63 @@
-name: Jira to GitHub Workflow
+name: Abrir PR ao Mover Card
 
 on:
-  workflow_dispatch:
-    inputs:
-      jira_card_key:
-        description: 'Jira Card Key'
-        required: true
-        type: string
+  repository_dispatch:
+    types: [PR_OPEN]
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  create-pr:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Fetch all history so we can check branches
 
-    - name: Print Jira Card Key
-      run: echo "Jira Card Key is ${{ github.event.inputs.jira_card_key }}"
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Extract issue details
+        id: extract
+        run: |
+          echo "Extracting issue details"
+          echo "Issue Key: ${{ github.event.client_payload.issue_key }}"
+          echo "User Name: ${{ github.event.client_payload.user_name }}"
+
+      - name: Check if branch exists
+        id: check_branch
+        run: |
+          if git show-ref --verify --quiet refs/remotes/origin/${{ github.event.client_payload.issue_key }}; then
+            echo "Branch exists"
+          else
+            echo "Branch does not exist"
+            exit 1
+          fi
+
+      - name: Check if develop branch exists
+        run: |
+          if git show-ref --verify --quiet refs/remotes/origin/develop; then
+            echo "Develop branch exists"
+          else
+            echo "Develop branch does not exist"
+            exit 1
+          fi
+
+      - name: Check differences
+        run: |
+          git checkout ${{ github.event.client_payload.issue_key }}
+          git fetch origin develop:develop
+          git diff develop --name-only
+
+      - name: Create Pull Request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: "develop"
+          branch: "${{ github.event.client_payload.issue_key}}"
+          title: "PR para a issue ${{ github.event.client_payload.issue_key}} criado por ${{ github.event.client_payload.user_name }}"
+          body: |
+            Este PR resolve a issue ${{ github.event.client_payload.issue_key}}
