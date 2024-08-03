@@ -16,9 +16,13 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history so we can check branches
 
-      - name: Fetch all branches
-        run: git fetch --all
-
+      - name: Update master and develop and fetch all branches
+        run: |
+          git checkout master
+          git pull master
+          git checkout develop
+          git pull develop
+          
       - name: Extract issue details
         id: extract
         run: |
@@ -40,18 +44,6 @@ jobs:
         run: |
           git checkout ${{ github.event.client_payload.issue_key }}
           git pull origin ${{ github.event.client_payload.issue_key }}
-
-      - name: Check if develop branch exists
-        run: |
-          if git show-ref --verify --quiet refs/remotes/origin/develop; then
-            echo "Develop branch exists"
-          else
-            echo "Develop branch does not exist"
-            exit 1
-          fi
-
-      - name: Fetch develop branch
-        run: git pull origin develop:develop
 
       - name: Check differences
         run: |
