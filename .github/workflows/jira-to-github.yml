@@ -12,17 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Fetch all history so we can check branches
 
-      - name: Update master and develop and fetch all branches
+      - name: Update master branch
         run: |
-          git checkout origin/master
-          git pull
-          git checkout origin/develop
-          git pull
-          
+          git checkout master
+          git pull origin master
+
+      - name: Update develop branch
+        run: |
+          git checkout develop
+          git pull origin develop
+      
       - name: Extract issue details
         id: extract
         run: |
@@ -50,10 +53,8 @@ jobs:
           git diff develop --name-only
           git diff develop
 
-      - name: Update develop and task branch
+      - name: Update task branch
         run: |
-          git checkout develop
-          git pull develop
           git checkout ${{ github.event.client_payload.issue_key }}
           git pull ${{ github.event.client_payload.issue_key }}
 
