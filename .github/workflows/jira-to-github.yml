@@ -36,7 +36,7 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout feature branch
+      - name: Checkout issue branch
         run: |
           git checkout ${{ github.event.client_payload.issue_key }}
           git pull origin ${{ github.event.client_payload.issue_key }}
@@ -50,10 +50,21 @@ jobs:
             exit 1
           fi
 
+      - name: Fetch develop branch
+        run: git fetch origin develop:develop
+
       - name: Check differences
         run: |
-          git fetch origin develop:develop
           git diff develop --name-only
+          git diff develop
+
+      - name: Apply changes from develop
+        run: |
+          git checkout develop
+          git pull origin develop
+          git checkout ${{ github.event.client_payload.issue_key }}
+          git rebase develop
+          git push origin ${{ github.event.client_payload.issue_key }} --force-with-lease
 
       - name: Create Pull Request
         id: create_pr
@@ -61,7 +72,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: "develop"
-          branch: "${{ github.event.client_payload.issue_key}}"
+          branch: "${{ github.event.client_payload.issue_key }}"
           title: "PR para a issue ${{ github.event.client_payload.issue_key}} criado por ${{ github.event.client_payload.user_name }}"
           body: |
             Este PR resolve a issue ${{ github.event.client_payload.issue_key}}
