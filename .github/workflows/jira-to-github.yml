@@ -58,10 +58,10 @@ jobs:
           git diff develop --name-only
           git diff develop
 
-      - name: Apply changes from develop
+      - name: Update develop and task branch
         run: |
           git checkout develop
-          git pull origin develop
+          git pull develop
           git checkout ${{ github.event.client_payload.issue_key }}
           git pull ${{ github.event.client_payload.issue_key }}
 
