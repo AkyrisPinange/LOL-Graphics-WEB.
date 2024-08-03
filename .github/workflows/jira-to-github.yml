@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0  # Fetch all history so we can check branches
 
       - name: Fetch all branches
-        run: git fetch --all
+        run: git pull --all
 
       - name: Extract issue details
         id: extract
@@ -51,7 +51,7 @@ jobs:
           fi
 
       - name: Fetch develop branch
-        run: git fetch origin develop:develop
+        run: git pull origin develop:develop
 
       - name: Check differences
         run: |
@@ -63,6 +63,7 @@ jobs:
           git checkout develop
           git pull origin develop
           git checkout ${{ github.event.client_payload.issue_key }}
+          git pull origin ${{ github.event.client_payload.issue_key }}
           git rebase develop
           git push origin ${{ github.event.client_payload.issue_key }} --force-with-lease
 
