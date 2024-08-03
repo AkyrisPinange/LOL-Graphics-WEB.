@@ -16,22 +16,16 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history so we can check branches
 
-      - name: Update master branch
-        run: |
-          git checkout master
-          git pull origin master
-
-      - name: Update develop branch
-        run: |
-          git checkout develop
-          git pull origin develop
-      
       - name: Extract issue details
         id: extract
         run: |
           echo "Extracting issue details"
           echo "Issue Key: ${{ github.event.client_payload.issue_key }}"
           echo "User Name: ${{ github.event.client_payload.user_name }}"
+
+      - name: Fetch all branches
+        run: |
+          git fetch --all
 
       - name: Check if branch exists
         id: check_branch
@@ -45,19 +39,7 @@ jobs:
 
       - name: Checkout issue branch
         run: |
-          git fetch origin
           git checkout -b ${{ github.event.client_payload.issue_key }} origin/${{ github.event.client_payload.issue_key }}
-          git pull origin ${{ github.event.client_payload.issue_key }}
-
-      - name: Check differences
-        run: |
-          git diff develop --name-only
-          git diff develop
-
-      - name: Update task branch
-        run: |
-          git checkout ${{ github.event.client_payload.issue_key }}
-          git pull origin ${{ github.event.client_payload.issue_key }}
 
       - name: Create Pull Request
         id: create_pr
